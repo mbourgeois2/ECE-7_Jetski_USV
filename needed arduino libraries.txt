@@ -1,0 +1,7 @@
+Embedded Template Library ETL version 20.22.0
+Varspeedservo version 1.1.3 (https://github.com/netlabtoolkit/VarSpeedServo)
+
+FOR 2.4 GHz RECEIVER:
+Bolder flight systems SBUS version 2.1.2
+
+FOR 900MHz RECEIVER:
