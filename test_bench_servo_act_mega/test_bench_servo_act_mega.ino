@@ -1,8 +1,15 @@
 //--------------------------------------------------------
 #include <Embedded_Template_Library.h>
 #include "sbus.h"
+#include <VarSpeedServo.h>
 
 SbusRx x8r(&Serial3);
+
+//--------------------------------------------------------------
+VarSpeedServo THROTTLE_S;
+VarSpeedServo CHOKE_S;
+//--------------------------------------------------------------
+
 uint16_t channels[16];
 int numchannels = 12;
 int PWM_MAX = 255;
@@ -18,8 +25,13 @@ int PWM_Steer2 = 3;
 int Feedback_Act = A0;
 int Feedback_S1 = A1;
 int Feedback_S2 = A2;
-//  int D_Kill = 3;
-//  int D_Start = 2;
+int D_Kill = 49;
+int D_Start = 47;
+
+int FeedbackVal_Choke = 0;
+int FeedbackVal_Throttle = 0;
+int FeedbackVal_Steer = 0;
+
 int I_O = 0;
 int killState = 1;
 boolean done;
@@ -34,6 +46,14 @@ void setup()
  pinMode(Feedback_Act, INPUT);
  pinMode(Feedback_S1, INPUT);
  pinMode(Feedback_S2, INPUT);
+ pinMode(D_Kill, OUTPUT);
+ pinMode(D_Start, OUTPUT);
+
+ THROTTLE_S.attach(PWM_Throttle);  // attaches the servo on pin 9 to the servo object
+ THROTTLE_S.write(0,255,true); // set the intial position of the servo, as fast as possible, wait until done
+  
+ CHOKE_S.attach(PWM_Choke);  // attaches the servo on pin 9 to the servo object
+ CHOKE_S.write(0,255,true); // set the intial position of the servo, as fast as possible, wait until done
  
 // pinMode(31, OUTPUT);
 // while (true) {
@@ -69,14 +89,18 @@ void loop()
         channels[i] = 0;
       }
     }
-    //-----------========================================================================================================--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------==============-
-    aControl(Feedback_Act, PWM_Steer1, PWM_Steer2, channels[steer]);
-    sControl(Feedback_S1, PWM_Choke, channels[8]);
-    sControl(Feedback_S2, PWM_Throttle, channels[throttle]);
-    Serial.println(FeedbackSmooth(A0));
-    
+    //------------------------------------------------------------------------------------------
+    FeedbackVal_Steer = FeedbackRead(Feedback_Act);
+    //FeedbackVal_Choke = FeedbackRead(Feedback_S1);
+    //FeedbackVal_Throttle = FeedbackRead(Feedback_S2);
+    //Serial.println(FeedbackRead(A1));
+    //Serial.println(FeedbackVal_Steer);
+    //------------------------------------------------------------------------------------------
+    aControl(FeedbackVal_Steer, PWM_Steer1, PWM_Steer2, channels[steer]);
+    CHOKE_S.write(180*map(channels[8], 0, 255, 0, 180)/180,255,false);
+    THROTTLE_S.write(180*map(channels[throttle], 0, 255, 0, 180)/180,255,false);
     //end control code
-    //---------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
   }
   else {
     // Serial.println("nothin");
@@ -104,21 +128,40 @@ void aControl(int w, int x, int y, int z) {
 // }
 // }
 
- z=z*4;
- if (z < 505)
+ //z=z*4;
+ if (z < 122)
  {
  // reverse rotation
- int reversePWM = -(z - 511) / 2;
+ //int reversePWM = -(z - 511) / 2;
+ //int reversePWM = -(z - 127);
  analogWrite(y, 0);
- analogWrite(x, reversePWM);
+ analogWrite(x, 254);
  }
- if (z > 520)
+ else if (z > 130)
  {
  // forward rotation
- int forwardPWM = (z - 512) / 2;
- analogWrite(y, forwardPWM);
+ //int forwardPWM = (z - 512) / 2;
+ //int forwardPWM = (z - 127);
+ analogWrite(y, 254);
  analogWrite(x, 0);
  }
+ 
+ else {
+   Serial.println(w);
+ if (w > 128) {
+ analogWrite(y, 0);
+ analogWrite(x, 254);
+ }
+ else if (w < 124) {
+ analogWrite(y, 254);
+ analogWrite(x, 0);
+ }
+ else if((w <= 128) && (w >= 124)) {
+  analogWrite(y, 0);
+  analogWrite(x, 0);
+ }
+ }
+ 
 
  
 }
@@ -153,6 +196,28 @@ void ski_start(int x, int y) {
     I_O = 0;
     killState = 0;
   }
+}
+
+int FeedbackRead(int x) {
+ int t = analogRead(x);
+ int u = 0;
+ int v = 0;
+ switch (x) {
+ case A0:
+ t = FeedbackSmooth(x);
+ u = 19;
+ v = 307;
+ break;
+ case A1:
+ u = 55;
+ v = 596;
+ break;
+ case A2:
+ u = 34;
+ v = 344;
+ break;
+ }
+ return map(t, u, v, 0, 255);
 }
 
 int FeedbackSmooth(int num)
