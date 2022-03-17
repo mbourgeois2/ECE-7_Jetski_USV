@@ -147,7 +147,6 @@ void aControl(int w, int x, int y, int z) {
  }
  
  else {
-   Serial.println(w);
  if (w > 128) {
  analogWrite(y, 0);
  analogWrite(x, 254);
