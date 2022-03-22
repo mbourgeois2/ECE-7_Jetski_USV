@@ -43,8 +43,8 @@ int FeedbackRead(int x) {
  switch (x) {
  case A0:
  t = FeedbackSmooth(x);
- u = 19;
- v = 307;
+ u = 31;
+ v = 306;
  break;
  case A1:
  u = 55;
@@ -60,42 +60,18 @@ int FeedbackRead(int x) {
 
 int FeedbackSmooth(int num)
 {
-  int mean;
-  int reading[20];
-  int temp;
+  int mean = 0;
   int result;
-  for(int q = 0; q < 20; q++)
+  for(int k = 0; k < 19; k++)
   {
-    reading[q] = analogRead(num);
-    // delay here maybe? delay(3);
+    mean += analogRead(Feedback_Act);
   }
-  done = false;
-  while(done != true)
-  {
-    done = true;
-    for(int q = 0; q < 20; q++)
-    {
-      temp = 0;
-      if(reading[q] > reading[q + 1])
-      {
-        temp = reading[q + 1];
-        reading[q + 1] = reading[q];
-        reading[q] = temp;
-        done=false;
-      }
-    }
-  }
-  mean = 0;
-  for(int k = 6; k < 14; k++)
-  {
-    mean += reading[k];
-  }
-  result=mean/14;
+  result = mean/20;
   return(result);
 }
 
-void aControl(int w, int x, int y, int z) {
- //int w = FeedbackRead(Feedback_Act);
+void aControl(int x, int y, int z) {
+ int w = FeedbackRead(Feedback_Act);
  if (w > z+2) {
     analogWrite(y, 0);
     analogWrite(x, 254);
@@ -186,12 +162,14 @@ void loop()
     }
     //------------------------------------------------------------------------------------------
     FeedbackVal_Steer = FeedbackRead(Feedback_Act);
+    Serial.println(FeedbackVal_Steer);
+    //FeedbackVal_Steer = int(x);
     //FeedbackVal_Choke = FeedbackRead(Feedback_S1);
     //FeedbackVal_Throttle = FeedbackRead(Feedback_S2);
     //Serial.println(FeedbackRead(A1));
     //Serial.println(FeedbackVal_Steer);
     //------------------------------------------------------------------------------------------
-    aControl(FeedbackVal_Steer, PWM_Steer1, PWM_Steer2, channels[steer]);
+    aControl(PWM_Steer1, PWM_Steer2, channels[steer]);
     CHOKE_S.write(180*map(channels[8], 0, 255, 0, 180)/180,255,false);
     THROTTLE_S.write(180*map(channels[throttle], 0, 255, 0, 180)/180,255,false);
     //end control code
