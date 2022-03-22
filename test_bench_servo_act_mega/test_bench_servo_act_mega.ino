@@ -94,8 +94,8 @@ int FeedbackSmooth(int num)
   return(result);
 }
 
-void aControl(int x, int y, int z) {
- int w = FeedbackRead(Feedback_Act);
+void aControl(int w, int x, int y, int z) {
+ //int w = FeedbackRead(Feedback_Act);
  if (w > z+2) {
     analogWrite(y, 0);
     analogWrite(x, 254);
@@ -185,13 +185,13 @@ void loop()
       }
     }
     //------------------------------------------------------------------------------------------
-    //FeedbackVal_Steer = FeedbackRead(Feedback_Act);
+    FeedbackVal_Steer = FeedbackRead(Feedback_Act);
     //FeedbackVal_Choke = FeedbackRead(Feedback_S1);
     //FeedbackVal_Throttle = FeedbackRead(Feedback_S2);
     //Serial.println(FeedbackRead(A1));
     //Serial.println(FeedbackVal_Steer);
     //------------------------------------------------------------------------------------------
-    aControl(PWM_Steer1, PWM_Steer2, channels[steer]);
+    aControl(FeedbackVal_Steer, PWM_Steer1, PWM_Steer2, channels[steer]);
     CHOKE_S.write(180*map(channels[8], 0, 255, 0, 180)/180,255,false);
     THROTTLE_S.write(180*map(channels[throttle], 0, 255, 0, 180)/180,255,false);
     //end control code
