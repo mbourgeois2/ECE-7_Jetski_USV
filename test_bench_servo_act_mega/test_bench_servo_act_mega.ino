@@ -64,7 +64,7 @@ int FeedbackSmooth(int num)
   int result;
   for(int k = 0; k < 19; k++)
   {
-    mean += analogRead(Feedback_Act);
+    mean += analogRead(num);
   }
   result = mean/20;
   return(result);
@@ -123,7 +123,7 @@ void ski_start(int x, int y) {
 
 void setup()
 {
- TCCR0B = TCCR0B & B11111000 | B00000100; //chage PWM frequency on D5 and D6 to 244.14 Hz
+ TCCR0B = TCCR0B & B11111000 | B00000100; //chage PWM frequency on D4 and D13 to 244.14 Hz
  pinMode(PWM_Choke, OUTPUT);
  pinMode(PWM_Throttle, OUTPUT);
  pinMode(PWM_Steer1, OUTPUT);

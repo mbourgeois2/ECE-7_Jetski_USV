@@ -46,7 +46,7 @@ void setup() {
   pinMode(A0,INPUT);
   pinMode(5,OUTPUT);
   pinMode(6,OUTPUT);
-  TCCR0B = TCCR0B & B11111000 | B00000100; // for PWM frequency of 244.14 Hz
+  //TCCR0B = TCCR0B & B11111000 | B00000100; // for PWM frequency of 244.14 Hz
   //TCCR0B = TCCR0B & B11111000 | B00000101; // for PWM frequency of 61.04 Hz
 
 
@@ -90,8 +90,7 @@ void loop() {
   display.clearDisplay();
   display.setCursor(0, 10);
   display.println(channels[AUX]);
-  display.println(FeedbackSmooth(A0, 60));
-  //display.println(analogRead(A0));
+  display.println(analogRead(A0));
   display.display();
 
   //if ((analogRead(w)/4 + 5 != x) || (analogRead(w)/4 - 5 != x)){
@@ -106,48 +105,4 @@ void sControl(int w, int x, int y) {
 //}
 int val = map(y, 0, 255, 0, 180);   //112-180 works, 255 breaks it for some reason
   myservo.write(180*val/180,255,false);
-}
-
-int FeedbackSmooth(int num, int samples)
-{
-  int samp[samples];
-  int result;
-  //collect samples
-  for(int k = 0; k < samples; k++)
-  {
-    samp[k] = analogRead(num);
-  }
-  //sort samples
-  qsort(samp, samples, sizeof(int), compare);
-  
-  //remove bottom 20% of samples
-  for(int i = 0; i < (samples / 5); i++)
-  {
-    samp[i] = 0;
-  } 
-  
-  //remove top 20% of samples
-  for(int j = samples - samples / 5; j < samples; j++)
-  {
-    samp[j] = 0;
-  } 
-  
-  //calculate avg of samples
-  int sum = 0;
-  for(int m = 0; m < samples; m++)
-  {
-    sum += samp[m];
-  }
-  result = sum/(samples - (samples/5)*2);
-  return result;
-}
-
-int compare( const void* a, const void* b)
-{
-     int int_a = * ( (int*) a );
-     int int_b = * ( (int*) b );
-
-     if ( int_a == int_b ) return 0;
-     else if ( int_a < int_b ) return -1;
-     else return 1;
 }
