@@ -3,10 +3,12 @@
 
 TVout TV;
 
+String disp;
+char buf[32];
 void setup() {
   // put your setup code here, to run once:
   TV.begin(PAL,120,96);
-  TV.select_font(font4x6);
+  TV.select_font(font6x8);
   initOverlay();
 }
 
@@ -30,10 +32,14 @@ ISR(INT0_vect) {
 void loop() {
   // put your main code here, to run repeatedly:
   TV.clear_screen();
-  TV.print(0,85,"Throttle ");
+  TV.print(0,70,"Throttle ");
   TV.print((int)((float)analogRead(A0)/1023 * 100));
-  TV.print("%\n");
+  TV.println("%");
   TV.print("Choke ");
-  TV.print("2%");
+  TV.print("2");
+  TV.println("%");
+  TV.print("Steer ");
+  TV.print("2");
+  TV.println("%");
   TV.delay(50);
 }
