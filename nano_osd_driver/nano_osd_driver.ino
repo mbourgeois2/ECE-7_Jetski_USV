@@ -33,7 +33,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   TV.clear_screen();
   TV.print(0,70,"Throttle ");
-  TV.print((int)((float)analogRead(A0)/1023 * 100));
+  //TV.print((int)((float)analogRead(A0)/1023 * 100));
   TV.println("%");
   TV.print("Choke ");
   TV.print("2");

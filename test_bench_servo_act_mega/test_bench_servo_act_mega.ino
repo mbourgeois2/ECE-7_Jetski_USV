@@ -43,8 +43,8 @@ int FeedbackRead(int x) {
  switch (x) {
  case A0:
  t = FeedbackSmooth(x);
- u = 31;
- v = 306;
+ u = 30;
+ v = 542;
  break;
  case A1:
  u = 55;
@@ -84,16 +84,20 @@ void aControl(int x, int y, int z) {
     analogWrite(y, 0);
     analogWrite(x, 0);
  }
-
 }
 
-void sControl(int w, int x, int y) {
-  analogWrite(x,y);
-  //if ((analogRead(w)/4 + 5 != x) || (analogRead(w)/4 - 5 != x)){
-  //analogWrite(x,y);
-  //}
+void aMax(int x, int y, int z) {
+  if (z = 1) {
+      //extend
+      analogWrite(y, 254);
+      analogWrite(x, 0);
+  }
+  else if (z = -1) {
+     //retract
+     analogWrite(y, 0);
+     analogWrite(x, 254);
+  }
 }
-
 
 void ski_kill(int x, int y, int z) {
   if (y < (PWM_MAX-1)/2) {
@@ -119,8 +123,6 @@ void ski_start(int x, int y) {
   }
 }
 
-
-
 void setup()
 {
  TCCR0B = TCCR0B & B11111000 | B00000100; //chage PWM frequency on D4 and D13 to 244.14 Hz
@@ -144,7 +146,7 @@ void setup()
   
  //------------------------------------------------------
  x8r.Begin();
- Serial.begin(9600);
+ //Serial.begin(9600);
  //------------------------------------------------------
 }
 
@@ -162,14 +164,15 @@ void loop()
     }
     //------------------------------------------------------------------------------------------
     FeedbackVal_Steer = FeedbackRead(Feedback_Act);
-    Serial.println(FeedbackVal_Steer);
-    //FeedbackVal_Steer = int(x);
-    //FeedbackVal_Choke = FeedbackRead(Feedback_S1);
-    //FeedbackVal_Throttle = FeedbackRead(Feedback_S2);
-    //Serial.println(FeedbackRead(A1));
+    FeedbackVal_Choke = FeedbackRead(Feedback_S1);
+    FeedbackVal_Throttle = FeedbackRead(Feedback_S2);
     //Serial.println(FeedbackVal_Steer);
+    //Serial.println(FeedbackVal_Throttle);
+    //Serial.println(FeedbackVal_Choke);
+    //Serial.println(analogRead(A0));
     //------------------------------------------------------------------------------------------
     aControl(PWM_Steer1, PWM_Steer2, channels[steer]);
+    //aMax(PWM_Steer1, PWM_Steer2, 1);
     CHOKE_S.write(180*map(channels[8], 0, 255, 0, 180)/180,255,false);
     THROTTLE_S.write(180*map(channels[throttle], 0, 255, 0, 180)/180,255,false);
     //end control code
