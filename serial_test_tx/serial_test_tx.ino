@@ -1,7 +1,7 @@
 uint8_t a,s1,s2;
 const int buflen = 3;
 byte buf[buflen];
-int dt = 120;
+int dt = 60;
 void setup() {
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
