@@ -1,15 +1,17 @@
 #include <TVout.h>
+#include <pollserial.h>
 #include <fontALL.h>
 
 TVout TV;
+//pollserial pserial;
+const int buflen = 3;
+byte buf[buflen];
 
-String disp;
-char buf[32];
-void setup() {
-  // put your setup code here, to run once:
+void setup()  {
   TV.begin(PAL,120,96);
   TV.select_font(font6x8);
   initOverlay();
+  Serial.begin(1000000);  //big guy
 }
 
 void initOverlay() {
@@ -29,17 +31,26 @@ void initOverlay() {
 ISR(INT0_vect) {
   display.scanLine = 0;
 }
+
 void loop() {
-  // put your main code here, to run repeatedly:
-  TV.clear_screen();
-  TV.print(0,70,"Throttle ");
-  //TV.print((int)((float)analogRead(A0)/1023 * 100));
-  TV.println("%");
-  TV.print("Choke ");
-  TV.print("2");
-  TV.println("%");
-  TV.print("Steer ");
-  TV.print("2");
-  TV.println("%");
-  TV.delay(50);
+  if (Serial.available() >= buflen) {
+    for (int i=0;i<buflen;i++) {
+      buf[i] = Serial.read();
+    }
+    
+    while (Serial.available()) {Serial.read();};
+    Serial.flush();
+
+    TV.print(0,70,("Steer    "));
+    TV.write('\b'); TV.write('\b'); TV.write('\b');
+    TV.println(int(buf[0]));
+    TV.print(("Throt    "));
+    TV.write('\b'); TV.write('\b'); TV.write('\b');
+    TV.println(int(buf[1]));
+    TV.print(("Choke    "));
+    TV.write('\b'); TV.write('\b'); TV.write('\b');
+    TV.println(int(buf[2]));
+
+    while (Serial.available()) {Serial.read();};
+  }
 }

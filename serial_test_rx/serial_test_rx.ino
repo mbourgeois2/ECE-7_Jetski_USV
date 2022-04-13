@@ -5,14 +5,14 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {};
 
-  Serial1.begin(9600);
-  while (!Serial1) {};
+//  Serial1.begin(9600);
+//  while (!Serial1) {};
 }
 
 void loop() {
-  while (Serial1.available() < buflen) {};
+  while (Serial.available() < buflen) {};
   for (int i = 0; i<buflen; i++) {
-    buf[i] = Serial1.read();
+    buf[i] = Serial.read();
   }
   
   Serial.print(buf[0]);
@@ -20,12 +20,4 @@ void loop() {
   Serial.print(buf[1]);
   Serial.print(" ");
   Serial.println(buf[2]);
-}
-
-void serialEvent1() {
-//  while (Serial1.available()) {
-//    if (Serial1.read() == '\r') {
-//      Serial1.read();
-//    }
-//  }
 }
