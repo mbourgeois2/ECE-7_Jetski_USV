@@ -4,11 +4,16 @@
 TVout TV;
 const int buflen = 3;
 byte buf[buflen];
+bool alt = 0;
 
 void setup()  {
   TV.begin(PAL,120,96);
   TV.select_font(font6x8);
   initOverlay();
+  TV.println(0,70,("Steer    "));
+  TV.println(("Throt    "));
+  TV.print(("Choke    "));
+  
   Serial.begin(1000000);  //big guy
 }
 
@@ -39,15 +44,20 @@ void loop() {
     while (Serial.available()) {Serial.read();};
     Serial.flush();
 
-    TV.print(0,70,("Steer    "));
-    TV.write('\b'); TV.write('\b'); TV.write('\b');
-    TV.println(int(buf[0]));
-    TV.print(("Throt    "));
-    TV.write('\b'); TV.write('\b'); TV.write('\b');
-    TV.println(int(buf[1]));
-    TV.print(("Choke    "));
-    TV.write('\b'); TV.write('\b'); TV.write('\b');
-    TV.println(int(buf[2]));
+    if (alt == true) {
+      TV.set_cursor(55,70);
+      TV.print('\b'); TV.print('\b'); TV.print('\b');
+      TV.print(int(buf[0])*100/255);
+
+      TV.set_cursor(55,78);
+      TV.print('\b'); TV.print('\b'); TV.print('\b');
+      TV.println(int(buf[1])*100/255);
+
+      TV.set_cursor(55,86);
+      TV.print('\b'); TV.print('\b'); TV.print('\b');
+      TV.println(int(buf[2])*100/255);
+    }
+    alt = ~alt;
 
     while (Serial.available()) {Serial.read();};
   }
