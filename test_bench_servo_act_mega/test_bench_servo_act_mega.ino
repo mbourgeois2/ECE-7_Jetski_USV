@@ -15,8 +15,9 @@ uint16_t channels[numchannels];
 const int PWM_MAX = 255;
 const int throttle = 0;
 const int steer = 1;
-const int start = 7;
 const int kill = 6;
+const int start = 7;
+const int sw_cam = 8;
 //--------------------------------------------------------------
 const int PWM_Throttle = 4;
 const int PWM_Choke = 13;
@@ -27,6 +28,7 @@ const int Feedback_S1 = A1;
 const int Feedback_S2 = A2;
 const int D_Kill = 49;
 const int D_Start = 47;
+const int D_Cam = 31;
 
 int FeedbackVal_Choke = 0;
 int FeedbackVal_Throttle = 0;
