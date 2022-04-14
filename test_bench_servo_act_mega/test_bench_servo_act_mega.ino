@@ -123,6 +123,15 @@ void ski_start(int x, int y) {
   }
 }
 
+void osdsendfeed(byte a, byte b, byte c, int t) {
+  while (!Serial1.availableForWrite()) {};
+  if (millis() % t == 0) {
+    Serial1.write(a);
+    Serial1.write(b);
+    Serial1.write(c);
+  } 
+}
+
 void setup()
 {
  TCCR0B = TCCR0B & B11111000 | B00000100; //chage PWM frequency on D4 and D13 to 244.14 Hz
@@ -166,13 +175,13 @@ void loop()
     FeedbackVal_Steer = FeedbackRead(Feedback_Act);
     FeedbackVal_Choke = FeedbackRead(Feedback_S1);
     FeedbackVal_Throttle = FeedbackRead(Feedback_S2);
+    osdsendfeed(FeedbackVal_Steer, FeedbackVal_Throttle, FeedbackVal_Choke, 60);
     //Serial.println(FeedbackVal_Steer);
     //Serial.println(FeedbackVal_Throttle);
     //Serial.println(FeedbackVal_Choke);
     //Serial.println(analogRead(A0));
     //------------------------------------------------------------------------------------------
     aControl(PWM_Steer1, PWM_Steer2, channels[steer]);
-    //aMax(PWM_Steer1, PWM_Steer2, 1);
     CHOKE_S.write(180*map(channels[8], 0, 255, 0, 180)/180,255,false);
     THROTTLE_S.write(180*map(channels[throttle], 0, 255, 0, 180)/180,255,false);
     //end control code
