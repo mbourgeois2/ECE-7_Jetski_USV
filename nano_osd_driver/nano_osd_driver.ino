@@ -1,9 +1,7 @@
 #include <TVout.h>
-#include <pollserial.h>
 #include <fontALL.h>
 
 TVout TV;
-//pollserial pserial;
 const int buflen = 3;
 byte buf[buflen];
 
