@@ -148,6 +148,7 @@ void setup()
  pinMode(Feedback_S2, INPUT);
  pinMode(D_Kill, OUTPUT);
  pinMode(D_Start, OUTPUT);
+ pinMode(D_Cam, OUTPUT);
 
  //reset choke and throttle
  THROTTLE_S.attach(PWM_Throttle);  // attaches the servo on pin 9 to the servo object
