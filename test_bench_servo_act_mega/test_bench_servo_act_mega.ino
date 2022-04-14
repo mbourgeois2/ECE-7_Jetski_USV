@@ -10,23 +10,23 @@ VarSpeedServo THROTTLE_S;
 VarSpeedServo CHOKE_S;
 //--------------------------------------------------------------
 
-uint16_t channels[16];
-int numchannels = 12;
-int PWM_MAX = 255;
-int throttle = 0;
-int steer = 1;
-int start = 7;
-int kill = 6;
+const int numchannels = 18;
+uint16_t channels[numchannels];
+const int PWM_MAX = 255;
+const int throttle = 0;
+const int steer = 1;
+const int start = 7;
+const int kill = 6;
 //--------------------------------------------------------------
-int PWM_Throttle = 4;
-int PWM_Choke = 13;
-int PWM_Steer1 = 2;
-int PWM_Steer2 = 3;
-int Feedback_Act = A0;
-int Feedback_S1 = A1;
-int Feedback_S2 = A2;
-int D_Kill = 49;
-int D_Start = 47;
+const int PWM_Throttle = 4;
+const int PWM_Choke = 13;
+const int PWM_Steer1 = 2;
+const int PWM_Steer2 = 3;
+const int Feedback_Act = A0;
+const int Feedback_S1 = A1;
+const int Feedback_S2 = A2;
+const int D_Kill = 49;
+const int D_Start = 47;
 
 int FeedbackVal_Choke = 0;
 int FeedbackVal_Throttle = 0;
@@ -41,16 +41,18 @@ int FeedbackRead(int x) {
  int u = 0;
  int v = 0;
  switch (x) {
- case A0:
+ case Feedback_Act:
  t = FeedbackSmooth(x);
  u = 30;
- v = 542;
+ v = 414;
+//414 = 3in
+ //542 = 4in
  break;
- case A1:
+ case Feedback_S1:
  u = 55;
  v = 596;
  break;
- case A2:
+ case Feedback_S2:
  u = 34;
  v = 344;
  break;
@@ -124,11 +126,11 @@ void ski_start(int x, int y) {
 }
 
 void osdsendfeed(byte a, byte b, byte c, int t) {
-  while (!Serial1.availableForWrite()) {};
+  while (!Serial2.availableForWrite()) {};
   if (millis() % t == 0) {
-    Serial1.write(a);
-    Serial1.write(b);
-    Serial1.write(c);
+    Serial2.write(a);
+    Serial2.write(b);
+    Serial2.write(c);
   } 
 }
 
@@ -155,14 +157,13 @@ void setup()
   
  //------------------------------------------------------
  x8r.Begin();
- //Serial.begin(9600);
+ Serial.begin(1000000);
  //------------------------------------------------------
 }
 
 void loop()
 {
   //------------------------------------------------------------------------------------------------
-  //Serial.begin(9600);
   if (x8r.Read()) {
     for (int i = 0; i < numchannels; i++) {
       int val = map(x8r.rx_channels()[i], 185, 1811, 0, PWM_MAX);
