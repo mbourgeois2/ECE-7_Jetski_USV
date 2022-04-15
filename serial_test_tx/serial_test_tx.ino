@@ -11,7 +11,7 @@ void setup() {
 }
 
 void loop() {
-osdsendfeed(analogRead(A0) / 4,analogRead(A1) / 4,analogRead(A2) / 4, digitalRead(52),60);
+osdsendfeed(analogRead(A0) / 4*100/255,analogRead(A1) / 4*100/255,analogRead(A2) / 4*100/255, digitalRead(52),60);
 //Serial.println(digitalRead(52));
 }
 
@@ -34,13 +34,13 @@ osdsendfeed(analogRead(A0) / 4,analogRead(A1) / 4,analogRead(A2) / 4, digitalRea
 
 
 void osdsendfeed(byte a, byte b, byte c, byte d, int t) {
-  while (Serial2.availableForWrite() < 5) {};
+  while (Serial2.availableForWrite() < 6) {};
   if (millis() % t == 0) {
     Serial2.write(a);
     Serial2.write(b);
     Serial2.write(c);
     if (d && millis() % t*5 == 0)
-      Serial2.write(d);
+      Serial2.write('w');
     //Serial2.flush();
   } 
 }

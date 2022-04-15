@@ -42,7 +42,6 @@ void loop() {
     }
     
     //while (Serial.available()) {Serial.read();};
-    Serial.flush();
 
     if (alt == true) {
       TV.set_cursor(55,70);
