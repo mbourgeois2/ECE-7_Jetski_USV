@@ -2,18 +2,19 @@
 #include <fontALL.h>
 
 TVout TV;
-const int buflen = 3;
+
+const int buflen = 4;
 byte buf[buflen];
 bool alt = true;
+bool wet = false;
 
 void setup()  {
-  sei();
-  TV.begin(PAL,120,96);
+  TV.begin(PAL,87,87);
   TV.select_font(font6x8);
   initOverlay();
-  TV.println(0,70,("Steer    "));
-  TV.println(("Throt    "));
-  TV.print(("Choke    "));
+  TV.println(0,60,("St"));
+  TV.println("Th");
+  TV.print("Ch");
   
   Serial.begin(1000000);  //big guy
 }
@@ -37,6 +38,8 @@ ISR(INT0_vect) {
 }
 
 void loop() {
+  //
+  sei();
   if (Serial.available() >= buflen) {
     for (int i=0;i<buflen;i++) {
       buf[i] = Serial.read();
@@ -44,21 +47,30 @@ void loop() {
     
     //while (Serial.available()) {Serial.read();};
 
-    if (alt == true) {
-      TV.set_cursor(55,70);
-      TV.print('\b'); TV.print('\b'); TV.print('\b');
-      TV.print(int(buf[0]));
+    if (alt) {
+      TV.set_cursor(40,60);
+      TV.print('\b'); TV.print('\b'); TV.print('\b'); TV.print('\b');
+      TV.print((int(buf[0]) - 50)*2);
 
-      TV.set_cursor(55,78);
+      TV.set_cursor(39,68);
       TV.print('\b'); TV.print('\b'); TV.print('\b');
       TV.println(int(buf[1]));
 
-      TV.set_cursor(55,86);
+      TV.set_cursor(39,76);
       TV.print('\b'); TV.print('\b'); TV.print('\b');
       TV.println(int(buf[2]));
+
+      if (buf[3] && !wet) {
+        TV.print(0,0,"!!!");
+        wet = true;
+      }
+      else if (!buf[3] && wet) {
+        TV.print(0,0,"   ");
+        wet = false;
+      }
     }
     alt = ~alt;
 
     while (Serial.available()) {Serial.read();};
-  }
+}
 }

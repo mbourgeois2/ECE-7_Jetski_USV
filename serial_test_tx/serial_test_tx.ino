@@ -34,13 +34,13 @@ osdsendfeed(analogRead(A0) / 4*100/255,analogRead(A1) / 4*100/255,analogRead(A2)
 
 
 void osdsendfeed(byte a, byte b, byte c, byte d, int t) {
-  while (Serial2.availableForWrite() < 6) {};
+  while (Serial2.availableForWrite() < 5) {};
   if (millis() % t == 0) {
     Serial2.write(a);
     Serial2.write(b);
     Serial2.write(c);
-    if (d && millis() % t*5 == 0)
-      Serial2.write('w');
+    if (millis() % t*5 == 0)
+      Serial2.write(d);
     //Serial2.flush();
   } 
 }
