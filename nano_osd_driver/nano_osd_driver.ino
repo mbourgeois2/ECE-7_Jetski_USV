@@ -4,9 +4,10 @@
 TVout TV;
 const int buflen = 3;
 byte buf[buflen];
-bool alt = 0;
+bool alt = true;
 
 void setup()  {
+  sei();
   TV.begin(PAL,120,96);
   TV.select_font(font6x8);
   initOverlay();
