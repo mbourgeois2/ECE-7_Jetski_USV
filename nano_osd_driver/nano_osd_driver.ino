@@ -48,7 +48,7 @@ void loop() {
     //while (Serial.available()) {Serial.read();};
 
     if (alt) {
-      TV.set_cursor(40,60);
+      TV.set_cursor(45,60);
       TV.print('\b'); TV.print('\b'); TV.print('\b'); TV.print('\b');
       TV.print((int(buf[0]) - 50)*2);
 
