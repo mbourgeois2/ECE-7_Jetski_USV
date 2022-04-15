@@ -6,7 +6,7 @@ void setup() {
   pinMode(A2, INPUT);
   pinMode(52, INPUT);
 
-  Serial2.begin(9600);
+  Serial2.begin(1000000);
   while (!Serial2) {};
 }
 
@@ -39,8 +39,8 @@ void osdsendfeed(byte a, byte b, byte c, byte d, int t) {
     Serial2.write(a);
     Serial2.write(b);
     Serial2.write(c);
-    Serial2.write(d);
-    Serial2.write('>');
+    if (d && millis() % t*5 == 0)
+      Serial2.write(d);
     //Serial2.flush();
   } 
 }
