@@ -47,15 +47,15 @@ void loop() {
     if (alt == true) {
       TV.set_cursor(55,70);
       TV.print('\b'); TV.print('\b'); TV.print('\b');
-      TV.print(int(buf[0])*100/255);
+      TV.print(int(buf[0]));
 
       TV.set_cursor(55,78);
       TV.print('\b'); TV.print('\b'); TV.print('\b');
-      TV.println(int(buf[1])*100/255);
+      TV.println(int(buf[1]));
 
       TV.set_cursor(55,86);
       TV.print('\b'); TV.print('\b'); TV.print('\b');
-      TV.println(int(buf[2])*100/255);
+      TV.println(int(buf[2]));
     }
     alt = ~alt;
 
