@@ -40,7 +40,7 @@ void osdsendfeed(byte a, byte b, byte c, byte d, int t) {
     Serial2.write(b);
     Serial2.write(c);
     Serial2.write(d);
-    Serial2.write('\n');
+    Serial2.write('>');
     //Serial2.flush();
   } 
 }
