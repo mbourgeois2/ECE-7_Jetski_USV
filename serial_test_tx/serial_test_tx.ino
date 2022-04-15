@@ -3,8 +3,8 @@ void setup() {
   pinMode(A1, INPUT);
   pinMode(A2, INPUT);
   
-  Serial1.begin(1000000);
-  while (!Serial1) {};
+  Serial2.begin(1000000);
+  while (!Serial2) {};
 }
 
 void loop() {
@@ -29,10 +29,10 @@ osdsendfeed(analogRead(A0) / 4,analogRead(A1) / 4,analogRead(A2) / 4,60);
 //}
 
 void osdsendfeed(byte a, byte b, byte c, int t) {
-  while (!Serial1.availableForWrite()) {};
+  while (!Serial2.availableForWrite()) {};
   if (millis() % t == 0) {
-    Serial1.write(a);
-    Serial1.write(b);
-    Serial1.write(c);
+    Serial2.write(a);
+    Serial2.write(b);
+    Serial2.write(c);
   } 
 }
