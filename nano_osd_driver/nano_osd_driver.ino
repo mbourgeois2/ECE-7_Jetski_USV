@@ -41,7 +41,7 @@ void loop() {
       buf[i] = Serial.read();
     }
     
-    while (Serial.available()) {Serial.read();};
+    //while (Serial.available()) {Serial.read();};
     Serial.flush();
 
     if (alt == true) {
