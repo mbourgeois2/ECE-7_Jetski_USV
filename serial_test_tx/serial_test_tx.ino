@@ -1,14 +1,19 @@
+bool wat = false;
+
 void setup() {
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
   pinMode(A2, INPUT);
-  
+  pinMode(52, INPUT);
+
+  Serial.begin(9600);
   Serial2.begin(1000000);
   while (!Serial2) {};
 }
 
 void loop() {
-osdsendfeed(analogRead(A0) / 4,analogRead(A1) / 4,analogRead(A2) / 4,60);
+osdsendfeed(analogRead(A0) / 4*100/255,analogRead(A1) / 4*100/255,analogRead(A2) / 4*100/255, digitalRead(52),60);
+//Serial.println(digitalRead(52));
 }
 
 //void serialwritefeed() {
@@ -28,11 +33,14 @@ osdsendfeed(analogRead(A0) / 4,analogRead(A1) / 4,analogRead(A2) / 4,60);
 
 //}
 
-void osdsendfeed(byte a, byte b, byte c, int t) {
-  while (!Serial2.availableForWrite()) {};
+void osdsendfeed(byte a, byte b, byte c, byte d, int t) {
+  while (Serial2.availableForWrite() < 4) {};
   if (millis() % t == 0) {
     Serial2.write(a);
     Serial2.write(b);
     Serial2.write(c);
+    if (d) {
+      Serial2.write('w');
+    }
   } 
 }
