@@ -17,6 +17,7 @@ void setup()  {
   TV.print("Ch");
   
   Serial.begin(1000000);  //big guy
+  while (!Serial) {}
 }
 
 void initOverlay() {

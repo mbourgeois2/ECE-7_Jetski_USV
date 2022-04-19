@@ -8,6 +8,7 @@ void setup() {
 
   //Serial2.begin(9600);
   Serial2.begin(1000000);
+  while (!Serial2) {};
 }
 
 void loop() {
