@@ -15,9 +15,15 @@ void setup()  {
   TV.println(0,60,("St"));
   TV.println("Th");
   TV.print("Ch");
-  
+
   Serial.begin(1000000);  //big guy
   while (!Serial) {}
+}
+
+void backspace(byte yee) {
+  for (int i=0;i<yee;i++) {
+    TV.print(' ');
+  }
 }
 
 void initOverlay() {
@@ -40,7 +46,7 @@ ISR(INT0_vect) {
 
 void loop() {
   //
-  sei();
+  //sei();
   if (Serial.available() >= buflen) {
     for (int i=0;i<buflen;i++) {
       buf[i] = Serial.read();
@@ -62,11 +68,13 @@ void loop() {
       TV.println(int(buf[2]));
 
       if (buf[3] && !wet) {
-        TV.print(0,0,"!!!");
+        TV.print(0,0,"WATER");
         wet = true;
       }
       else if (!buf[3] && wet) {
-        TV.print(0,0,"   ");
+        TV.set_cursor(0,0);
+        backspace(5);
+        //TV.print("   ");
         wet = false;
       }
     }
