@@ -17,7 +17,7 @@ const int throttle = 0;
 const int steer = 1;
 const int kill = 6;
 const int start = 7;
-const int sw_cam = 8;
+const int cam = 11;
 //--------------------------------------------------------------
 const int PWM_Throttle = 4;
 const int PWM_Choke = 13;
@@ -103,28 +103,34 @@ void aMax(int x, int y, int z) {
   }
 }
 
-void ski_kill(int x, int y, int z) {
-  if (y < (PWM_MAX-1)/2) {
-    digitalWrite(x, HIGH);
-  }
-  if (y > (PWM_MAX-1)/2) {
-    digitalWrite(x, LOW);
-    digitalWrite(z, LOW);
-    I_O = 0;
-    killState = 1;
-  }
+void startswitch(byte s) {
+    if (s > 200) {
+      digitalWrite(D_Start, 1);
+    }
+    else if (s < 200) {
+      digitalWrite(D_Start, 0);
+    }
 }
 
-void ski_start(int x, int y) {
-  if ((y > (PWM_MAX-1)/2) && (killState == 0)) {
-    digitalWrite(x, HIGH);
-    I_O = 1;
-  }
-  if ((y < (PWM_MAX-1)/2)) {
-    digitalWrite(x, LOW);
-    I_O = 0;
-    killState = 0;
-  }
+void killswitch(int k) {
+    if (k > 200) {
+      digitalWrite(D_Kill, 1);
+    }
+    else if (k < 200) {
+      digitalWrite(D_Kill, 0);
+    }
+}
+
+void camswitch(int c) {
+      if (c > 200) {
+      digitalWrite(cam, 1);
+    }
+    else if (c <= 200 && c > 100) {
+      digitalWrite(D_Cam, 1);
+    }
+    else if (c <= 100) {
+      digitalWrite(D_Cam, 0);
+    }
 }
 
 void osdsendfeed(byte a, byte b, byte c, int t) {
@@ -149,6 +155,9 @@ void setup()
  pinMode(D_Kill, OUTPUT);
  pinMode(D_Start, OUTPUT);
  pinMode(D_Cam, OUTPUT);
+
+ digitalWrite(D_Start, 0);
+ digitalWrite(D_Kill, 0);
 
  //reset choke and throttle
  THROTTLE_S.attach(PWM_Throttle);  // attaches the servo on pin 9 to the servo object
@@ -176,6 +185,10 @@ void loop()
       }
     }
     //------------------------------------------------------------------------------------------
+    startswitch(channels[start]);
+    killswitch(channels[kill]);
+    camswitch(channels[cam]);
+    
     FeedbackVal_Steer = FeedbackRead(Feedback_Act);
     FeedbackVal_Choke = FeedbackRead(Feedback_S1);
     FeedbackVal_Throttle = FeedbackRead(Feedback_S2);
