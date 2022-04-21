@@ -157,7 +157,7 @@ void setup()
  pinMode(D_Cam, OUTPUT);
 
  digitalWrite(D_Start, 0);
- digitalWrite(D_Kill, 0);
+ digitalWrite(D_Kill, 1);
 
  //reset choke and throttle
  THROTTLE_S.attach(PWM_Throttle);  // attaches the servo on pin 9 to the servo object
@@ -170,7 +170,7 @@ void setup()
  //------------------------------------------------------
  x8r.Begin();
  //Serial.begin(9600);
- //Serial2.begin(1000000);
+ Serial2.begin(1000000);
  //------------------------------------------------------
 }
 
@@ -189,6 +189,7 @@ void loop()
     startswitch(channels[start]);
     killswitch(channels[kill]);
     camswitch(channels[cam]);
+    //Serial.println(channels[kill]);
     
     FeedbackVal_Steer = FeedbackRead(Feedback_Act);
     FeedbackVal_Choke = FeedbackRead(Feedback_S1);
