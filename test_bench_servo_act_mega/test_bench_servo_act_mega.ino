@@ -15,8 +15,8 @@ uint16_t channels[numchannels];
 const int PWM_MAX = 255;
 const int throttle = 0;
 const int steer = 1;
-const int kill = 6;
-const int start = 7;
+const int kill = 7;
+const int start = 6;
 const int cam = 11;
 //--------------------------------------------------------------
 const int PWM_Throttle = 4;
@@ -169,7 +169,8 @@ void setup()
   
  //------------------------------------------------------
  x8r.Begin();
- Serial.begin(1000000);
+ //Serial.begin(9600);
+ //Serial2.begin(1000000);
  //------------------------------------------------------
 }
 
