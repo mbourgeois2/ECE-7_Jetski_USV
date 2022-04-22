@@ -16,7 +16,7 @@ void setup()  {
   TV.println("Th");
   TV.print("Ch");
 
-  Serial.begin(1000000);  //big guy
+  Serial.begin(9600);  //big guy
   while (!Serial) {}
 }
 
