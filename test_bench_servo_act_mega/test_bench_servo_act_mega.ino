@@ -40,12 +40,13 @@ int killState = 1;
 boolean done;
 
 int FeedbackRead(int x) {
- int t = analogRead(x);
+ //int t = analogRead(x);
+ int t = FeedbackSmooth(x);
  int u = 0;
  int v = 0;
  switch (x) {
  case Feedback_Act:
- t = FeedbackSmooth(x);
+ //t = FeedbackSmooth(x);
  u = 30;
  v = 414;
 //414 = 3in
@@ -60,7 +61,12 @@ int FeedbackRead(int x) {
  v = 600;
  break;
  }
- return map(t, u, v, 0, 255);
+ int res = map(t, u, v, 0, PWM_MAX);
+   if (res < 0)
+    res = 0;
+  else if (result > PWM_MAX)
+    res = PWM_MAX;
+  return res;
 }
 
 int FeedbackSmooth(int num)
@@ -72,10 +78,6 @@ int FeedbackSmooth(int num)
     mean += analogRead(num);
   }
   result = mean/30;
-  if (result < 0)
-    result = 0;
-  else if (result > PWM_MAX)
-    result = PWM_MAX;
   return(result);
 }
 
