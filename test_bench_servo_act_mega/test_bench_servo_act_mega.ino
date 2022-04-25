@@ -25,8 +25,9 @@ const int PWM_Choke = 13;
 const int PWM_Steer1 = 2;
 const int PWM_Steer2 = 3;
 const int Feedback_Act = A0;
-const int Feedback_S1 = A2;
-const int Feedback_S2 = A1;
+const int Feedback_S1 = A1;
+const int Feedback_S2 = A2;
+const int waterSensor = A3;
 const int D_Kill = 49;
 const int D_Start = 47;
 const int D_Cam = 31;
@@ -39,7 +40,7 @@ int I_O = 0;
 int killState = 1;
 boolean done;
 
-int FeedbackRead(int x) {
+byte FeedbackRead(int x) {
  //int t = analogRead(x);
  int t = FeedbackSmooth(x);
  int u = 0;
@@ -64,7 +65,7 @@ int FeedbackRead(int x) {
  int res = map(t, u, v, 0, PWM_MAX);
    if (res < 0)
     res = 0;
-  else if (result > PWM_MAX)
+  else if (res > PWM_MAX)
     res = PWM_MAX;
   return res;
 }
@@ -81,7 +82,8 @@ int FeedbackSmooth(int num)
   return(result);
 }
 
-void aControl(int x, int y, int z) {
+void aControl(int x, int y, int zo) {
+  int z = 255-zo;
  int w = FeedbackRead(Feedback_Act);
  if (w > z+2) {
     analogWrite(y, 0);
@@ -140,6 +142,13 @@ void camswitch(int c) {
     }
 }
 
+void shutdown() {
+      for (int i = 0; i < numchannels; i++) {
+        channels[i] = 0;
+      }
+      channels[steer] = 128;
+}
+
 void osdsendfeed(byte a, byte b, byte c, byte d) {
   while (Serial2.availableForWrite() < 4) {}; 
     Serial2.write(a);
@@ -158,6 +167,7 @@ void setup()
  pinMode(Feedback_Act, INPUT);
  pinMode(Feedback_S1, INPUT);
  pinMode(Feedback_S2, INPUT);
+ pinMode(waterSensor, INPUT);
  pinMode(D_Kill, OUTPUT);
  pinMode(D_Start, OUTPUT);
  pinMode(D_Cam, OUTPUT);
@@ -177,7 +187,7 @@ void setup()
   
  //------------------------------------------------------
  x8r.Begin();
- //Serial.begin(9600);
+ Serial.begin(9600);
  Serial2.begin(9600);
  //------------------------------------------------------
 }
@@ -205,6 +215,9 @@ void loop()
     
     osdsendfeed(FeedbackVal_Steer*100/255, FeedbackVal_Throttle*100/255, 
     FeedbackVal_Choke*100/255, 0);
+
+//    osdsendfeed(FeedbackVal_Steer, FeedbackVal_Throttle, 
+//    FeedbackVal_Choke, 1);
     
     //Serial.println(FeedbackVal_Steer);
     //Serial.println(FeedbackVal_Throttle);
@@ -216,14 +229,17 @@ void loop()
     aControl(PWM_Steer1, PWM_Steer2, channels[steer]);
     CHOKE_S.write(180*map(channels[throttle], 0, 255, 0, 180)/180,255,false);
     THROTTLE_S.write(180*map(channels[choke], 0, 255, 0, 180)/180,255,false);
+    
     //end control code
     //------------------------------------------------------------------------------------------
   }
   else {
     // Serial.println("nothin");
-    for (int i = 0; i < numchannels; i++) {
-      channels[i] = 0;
-    }
+//    for (int i = 0; i < numchannels; i++) {
+//      channels[i] = 0;
+//    }
+      shutdown();
   }
+  Serial.println(channels[1]);
   //---------------------------------------------------------------------------------------------
 }
