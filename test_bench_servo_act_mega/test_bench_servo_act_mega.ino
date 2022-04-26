@@ -82,8 +82,7 @@ int FeedbackSmooth(int num)
   return(result);
 }
 
-void aControl(int x, int y, int zo) {
-  int z = 255-zo;
+void aControl(int x, int y, int z) {
  int w = FeedbackRead(Feedback_Act);
  if (w > z+2) {
     analogWrite(y, 0);
@@ -179,15 +178,15 @@ void setup()
 
  //reset choke and throttle
  THROTTLE_S.attach(PWM_Throttle);  // attaches the servo on pin 9 to the servo object
- THROTTLE_S.write(0,255,true); // set the intial position of the servo, as fast as possible, wait until done
+ THROTTLE_S.write(180,255,true); // set the intial position of the servo, as fast as possible, wait until done
   
  CHOKE_S.attach(PWM_Choke);  // attaches the servo on pin 9 to the servo object
- CHOKE_S.write(0,255,true); // set the intial position of the servo, as fast as possible, wait until done
+ CHOKE_S.write(180,255,true); // set the intial position of the servo, as fast as possible, wait until done
 
   
  //------------------------------------------------------
  x8r.Begin();
- Serial.begin(9600);
+ //Serial.begin(9600);
  Serial2.begin(9600);
  //------------------------------------------------------
 }
@@ -209,12 +208,14 @@ void loop()
     camswitch(channels[cam]);
     //Serial.println(channels[kill]);
     
-    FeedbackVal_Steer = FeedbackRead(Feedback_Act);
-    FeedbackVal_Throttle = FeedbackRead(Feedback_S1);
-    FeedbackVal_Choke = FeedbackRead(Feedback_S2);
+    FeedbackVal_Steer = 255-FeedbackRead(Feedback_Act);
+    FeedbackVal_Throttle = 255-FeedbackRead(Feedback_S1);
+    FeedbackVal_Choke = 255-FeedbackRead(Feedback_S2);
     
-    osdsendfeed(FeedbackVal_Steer*100/255, FeedbackVal_Throttle*100/255, 
-    FeedbackVal_Choke*100/255, 0);
+    if (Serial2) {
+      osdsendfeed(FeedbackVal_Steer*100/255, FeedbackVal_Throttle*100/255, 
+      FeedbackVal_Choke*100/255, 0);
+    }
 
 //    osdsendfeed(FeedbackVal_Steer, FeedbackVal_Throttle, 
 //    FeedbackVal_Choke, 1);
@@ -226,9 +227,9 @@ void loop()
     //Serial.println(analogRead(A1));
     //Serial.println(analogRead(A2));
     //------------------------------------------------------------------------------------------
-    aControl(PWM_Steer1, PWM_Steer2, channels[steer]);
-    CHOKE_S.write(180*map(channels[throttle], 0, 255, 0, 180)/180,255,false);
-    THROTTLE_S.write(180*map(channels[choke], 0, 255, 0, 180)/180,255,false);
+    aControl(PWM_Steer1, PWM_Steer2, 255-channels[steer]);
+    CHOKE_S.write(180*map(255-channels[throttle], 0, 255, 0, 180)/180,255,false);
+    THROTTLE_S.write(180*map(255-channels[choke], 0, 255, 0, 180)/180,255,false);
     
     //end control code
     //------------------------------------------------------------------------------------------
