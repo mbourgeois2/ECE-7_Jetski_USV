@@ -236,11 +236,11 @@ void loop()
   }
   else {
     // Serial.println("nothin");
-//    for (int i = 0; i < numchannels; i++) {
-//      channels[i] = 0;
-//    }
-      shutdown();
+    for (int i = 0; i < numchannels; i++) {
+      channels[i] = 0;
+    }
+      //shutdown();
   }
-  Serial.println(channels[1]);
+  //Serial.println(channels[1]);
   //---------------------------------------------------------------------------------------------
 }
